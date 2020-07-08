@@ -1,0 +1,111 @@
+---
+title: "Tidyverse (New)"
+output: 
+  learnr::tutorial
+runtime: shiny_prerendered
+---
+
+```{r context = "setup", include=FALSE, message=FALSE}
+library(tidyverse)
+library(learnr)
+library(gradethis)
+library(submitr)
+library(googlesheets4)
+library(shinyjs)
+
+# Tutorial options
+tutorial_options(exercise.checker = gradethis::grade_learnr)
+options(tutorial.storage = "none")
+knitr::opts_chunk$set(echo = FALSE, message = FALSE)
+
+# Create initial responses df
+responses <- data.frame("", "", "", "", "", "", "", "")
+names(responses) <- c("time", "user_id", "email", "event", "tutorial_id", "chunk_label", "submission", "correct")
+
+# Create event recorder, modified from Kaplan's markr package
+test_event_recorder <- function(tutorial_id,
+                                user_id,
+                                tutorial_version,
+                                event, data) {
+  this_event <-
+    data.frame(time = date(),
+               user_id = user_id,
+               email = "",
+               event = event,
+               tutorial_id = tutorial_id,
+               chunk_label = ifelse(is.null(data$label), "", data$label),
+               submission = as.character(jsonlite::toJSON(data)),
+               correct = ifelse(is.null(data$correct), "", data$correct),
+               stringsAsFactors = FALSE)
+
+  # Don't store the output of chunks -- it can be arbitrarily long.
+  if  ( ! event %in% c("exercise_result")) {
+    event_df <- data.frame(this_event)
+    names(event_df)<- names(responses)
+    responses <<- rbind(responses, event_df)
+  }
+    
+}
+
+#  set up the event handler
+options(tutorial.event_recorder = test_event_recorder)
+
+```
+
+
+Load the gapminder library: 
+
+```{r exercise-1, exercise=TRUE}
+
+
+```
+
+```{r exercise-1-solution}
+library(gapminder)
+```
+
+Question 2: Glimpse gapminder.
+
+```{r exercise-2, exercise=TRUE}
+
+
+```
+
+```{r exercise-2-solution}
+glimpse(gapminder)
+
+```
+
+```{r context="setup"}
+
+fluidPage(
+    shinyjs::useShinyjs(),
+    mainPanel(
+      title = "Submit form", id = "submitTab", value = "submitTab",
+          br(),
+          div(id = "form",
+            textInput("name", "Name", ""),
+            textInput("email", "Harvard Email"),
+            actionButton("download", "Download .csv of responses", class = "btn-primary") #,
+          )
+        )
+    )
+
+
+```
+
+
+```{r context="server"}
+
+ observeEvent(input$download,{
+        
+        responses$user_id <- input$name
+        responses$email <- input$email
+   
+        write_csv(responses, "responses.csv")
+      })
+
+
+
+```
+
