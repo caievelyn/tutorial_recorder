@@ -9,6 +9,7 @@ runtime: shiny_prerendered
 library(tidyverse)
 library(learnr)
 library(shinyjs)
+library(gapminder)
 
 # Tutorial options
 options(tutorial.storage = "none")
