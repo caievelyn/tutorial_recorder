@@ -82,7 +82,8 @@ fluidPage(
           div(id = "form",
             textInput("name", "Name", ""),
             textInput("email", "Harvard Email"),
-            actionButton("download", "Download .csv of responses", class = "btn-primary") #,
+            actionButton("submit", "Submit", class = "btn-primary"),
+            downloadButton("downloadData", "Download")
           )
         )
     )
@@ -93,13 +94,19 @@ fluidPage(
 
 ```{r context="server"}
 
- observeEvent(input$download,{
+ observeEvent(input$submit,{
         
-        responses$user_id <- input$name
-        responses$email <- input$email
-   
-        write_csv(responses, "responses.csv")
-      })
+        responses$user_id <<- input$name
+        responses$email <<- input$email
+ })
+
+output$downloadData <- downloadHandler(
+  
+      filename = "responses.csv",
+      content = function(file) {
+      write_csv(responses, file)
+    }
+  )
 
 
 
