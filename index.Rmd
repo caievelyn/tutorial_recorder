@@ -17,8 +17,8 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE)
 x <- read_csv("test.csv")
 
 # Create initial responses df
-responses <- data.frame("", "", "", "", "", "", "", "")
-names(responses) <- c("time", "user_id", "email", "event", "tutorial_id", "chunk_label", "submission", "correct")
+responses <- data.frame("", "", "", "", "", "")
+names(responses) <- c("time", "user_id", "email", "event", "tutorial_id", "chunk_label",)
 
 # Create event recorder, modified from Kaplan's markr package
 test_event_recorder <- function(tutorial_id,
@@ -32,8 +32,6 @@ test_event_recorder <- function(tutorial_id,
                event = event,
                tutorial_id = tutorial_id,
                chunk_label = ifelse(is.null(data$label), "", data$label),
-               submission = as.character(jsonlite::toJSON(data)),
-               correct = ifelse(is.null(data$correct), "", data$correct),
                stringsAsFactors = FALSE)
 
   # Don't store the output of chunks -- it can be arbitrarily long.
