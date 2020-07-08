@@ -18,7 +18,7 @@ x <- read_csv("test.csv")
 
 # Create initial responses df
 responses <- data.frame("", "", "", "", "", "")
-names(responses) <- c("time", "user_id", "email", "event", "tutorial_id", "chunk_label",)
+names(responses) <- c("time", "user_id", "email", "event", "tutorial_id", "chunk_label")
 
 # Create event recorder, modified from Kaplan's markr package
 test_event_recorder <- function(tutorial_id,
