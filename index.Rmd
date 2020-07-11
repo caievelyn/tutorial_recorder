@@ -1,5 +1,5 @@
 ---
-title: "Tidyverse (New)"
+title: "Tidyverse"
 output: 
   learnr::tutorial
 runtime: shiny_prerendered
@@ -9,107 +9,71 @@ runtime: shiny_prerendered
 library(tidyverse)
 library(learnr)
 library(shinyjs)
-library(gapminder)
 
 # Tutorial options
 options(tutorial.storage = "none")
 knitr::opts_chunk$set(echo = FALSE, message = FALSE)
-
-x <- read_csv("test.csv")
-
-# Create initial responses df
-responses <- data.frame("", "", "", "", "", "")
-names(responses) <- c("time", "user_id", "email", "event", "tutorial_id", "chunk_label")
-
-# Create event recorder, modified from Kaplan's markr package
-test_event_recorder <- function(tutorial_id,
-                                user_id,
-                                tutorial_version,
-                                event, data) {
-  this_event <-
-    data.frame(time = date(),
-               user_id = user_id,
-               email = "",
-               event = event,
-               tutorial_id = tutorial_id,
-               chunk_label = ifelse(is.null(data$label), "", data$label),
-               stringsAsFactors = FALSE)
-
-  # Don't store the output of chunks -- it can be arbitrarily long.
-  if  ( ! event %in% c("exercise_result")) {
-    event_df <- data.frame(this_event)
-    names(event_df)<- names(responses)
-    responses <<- rbind(responses, event_df)
-  }
-    
-}
-
-#  set up the event handler
-options(tutorial.event_recorder = test_event_recorder)
-
 ```
 
+ What are R and RStudio?
 
-Load the gapminder library: 
-
-```{r exercise-1, exercise=TRUE}
-
-
+```{r quiz-1, echo = FALSE}
+quiz(
+  question("What are R and RStudio?",
+             answer("R is a programming language and RStudio is an integrated development environment (IDE)", 
+                    correct = TRUE),
+             answer("RStudio is a programming language and R is an IDE"),
+             answer("R and RStudio are both programming languages"),
+             answer("R and RStudio are both IDEs"),
+             allow_retry = TRUE
+    ),
+  question("In what order do you install R and RStudio?",
+             answer("First R then RStudio", correct = TRUE),
+             answer("First RStudio then R"),
+             allow_retry = TRUE
+    )
+)
 ```
 
-```{r exercise-1-solution}
-library(gapminder)
+## Submit
+Ignore the link below. Copy and paste the hash after clicking "Generate Submission" and upload to Canvas!
+
+```{r context="server"}
+learnrhash::encoder_logic()
 ```
 
-Question 2: Glimpse gapminder.
-
-```{r exercise-2, exercise=TRUE}
-
-
-```
-
-```{r exercise-2-solution}
-glimpse(gapminder)
-
+```{r encode, echo=FALSE}
+learnrhash::encoder_ui()
 ```
 
 ```{r context="setup"}
-
 fluidPage(
     shinyjs::useShinyjs(),
     mainPanel(
-      title = "Submit form", id = "submitTab", value = "submitTab",
-          br(),
           div(id = "form",
             textInput("name", "Name", ""),
-            textInput("email", "Harvard Email"),
+            textInput("hash", "Hash", ""),
             actionButton("submit", "Submit", class = "btn-primary"),
             downloadButton("downloadData", "Download")
           )
         )
     )
-
-
 ```
 
-
 ```{r context="server"}
-
  observeEvent(input$submit,{
         
-        responses$user_id <<- input$name
-        responses$email <<- input$email
+        name_id <<- input$name
+        hash_id <<- input$hash
+        
+        responses <<- data.frame("Name" = name_id, "Hash" = hash_id)
+        
  })
-
 output$downloadData <- downloadHandler(
-  
-      filename = "responses.csv",
+      filename = "responses.rds",
       content = function(file) {
-      write_csv(responses, file)
+      write_rds(responses, file)
     }
   )
-
-
-
 ```
 
